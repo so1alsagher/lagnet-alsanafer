@@ -62,7 +62,7 @@ const ITEMS: Item[] = [
     ghostVw: 24,
     title: 'بوابة الطالب',
     desc: 'سجّل دخولك لإدارة بياناتك وخدماتك الجامعية.',
-    href: '#',
+    href: 'http://appsrv2.fet.edu.jo:7777/reg_new/index.jsp',
     bg: '#1E6AC8',
     panel: '#0F4690',
   },
