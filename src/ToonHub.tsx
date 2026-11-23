@@ -32,7 +32,7 @@ const ITEMS: Item[] = [
     ghostVw: 30,
     title: 'منصة modle',
     desc: 'ادخل إلى موادك ومحاضراتك وواجباتك من مكان واحد.',
-    href: '#',
+    href: 'https://s2.ebalqa.courses/fet/my/',
     bg: '#3A8DEB',
     panel: '#1D5FB5',
   },
