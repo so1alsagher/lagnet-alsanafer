@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { linkProps } from './pages/utils';
 
 const EASE = 'cubic-bezier(0.4,0,0.2,1)';
 const DURATION = 650;
@@ -28,21 +29,21 @@ type Item = {
 const ITEMS: Item[] = [
   {
     src: '/icons/moodle.png',
-    ghost: 'modle',
+    ghost: 'مودل',
     ghostVw: 30,
-    title: 'منصة modle',
+    title: 'منصة مودل',
     desc: 'ادخل إلى موادك ومحاضراتك وواجباتك من مكان واحد.',
-    href: 'https://s2.ebalqa.courses/fet/my/',
+    href: '#',
     bg: '#3A8DEB',
     panel: '#1D5FB5',
   },
   {
     src: '/icons/books.png',
-    ghost: 'المواد الدراسية',
-    ghostVw: 12,
-    title: 'الكتب والمراجع',
-    desc: 'كل ما تحتاجه من كتب ومراجع دراسية وأسئلة سنوات بين يديك.',
-    href: '#',
+    ghost: 'المواد',
+    ghostVw: 24,
+    title: 'المواد الدراسية',
+    desc: 'كل ما تحتاجه من مواد ومراجع دراسية بين يديك.',
+    href: '#/materials',
     bg: '#2C7BD9',
     panel: '#14509E',
   },
@@ -62,7 +63,7 @@ const ITEMS: Item[] = [
     ghostVw: 24,
     title: 'بوابة الطالب',
     desc: 'سجّل دخولك لإدارة بياناتك وخدماتك الجامعية.',
-    href: 'http://appsrv2.fet.edu.jo:7777/reg_new/index.jsp',
+    href: '#',
     bg: '#1E6AC8',
     panel: '#0F4690',
   },
@@ -72,7 +73,7 @@ const ITEMS: Item[] = [
     ghostVw: 19,
     title: 'التخصصات الجامعية',
     desc: 'استعرض التخصصات المتاحة وتفاصيل كل برنامج.',
-    href: '#',
+    href: '#/majors',
     bg: '#3278D6',
     panel: '#1A58A8',
   },
@@ -86,6 +87,17 @@ const ITEMS: Item[] = [
     bg: '#5AA6F2',
     panel: '#2D74C4',
   },
+  // الأيقونة السابعة: مؤقتة. بدّل الصورة والاسم والرابط لما تجهز.
+  {
+    src: '/icons/new.svg',
+    ghost: 'جديد',
+    ghostVw: 28,
+    title: 'أيقونة جديدة',
+    desc: 'سيتم إضافة المحتوى قريباً.',
+    href: '#',
+    bg: '#2A72CC',
+    panel: '#154C94',
+  },
 ];
 
 const N = ITEMS.length;
@@ -94,10 +106,32 @@ type Role = 'center' | 'left' | 'right' | 'farLeft' | 'farRight' | 'back';
 
 // الفرق عن العنصر النشط -> الدور.
 // في الواجهة العربية (RTL): "التالي" على اليسار و"السابق" على اليمين.
-const ROLE_BY_OFFSET: Role[] = ['center', 'left', 'farLeft', 'back', 'farRight', 'right'];
+function roleForOffset(d: number): Role {
+  if (d === 0) return 'center';
+  if (d === 1) return 'left';
+  if (d === N - 1) return 'right';
+  if (d === 2) return 'farLeft';
+  if (d === N - 2) return 'farRight';
+  return 'back';
+}
 
 export default function ToonHub() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  // نتذكر الأيقونة الحالية عشان لما ترجع من صفحة داخلية تلاقي نفس المكان
+  const [activeIndex, setActiveIndex] = useState(() => {
+    try {
+      const v = Number(sessionStorage.getItem('toonhub-index'));
+      return Number.isInteger(v) && v >= 0 && v < N ? v : 0;
+    } catch {
+      return 0;
+    }
+  });
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('toonhub-index', String(activeIndex));
+    } catch {
+      /* تجاهل */
+    }
+  }, [activeIndex]);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 640 : false,
   );
@@ -132,7 +166,7 @@ export default function ToonHub() {
     return () => window.removeEventListener('keydown', onKey);
   }, [navigate]);
 
-  const roleOf = (i: number): Role => ROLE_BY_OFFSET[(i - activeIndex + N) % N];
+  const roleOf = (i: number): Role => roleForOffset((i - activeIndex + N) % N);
 
   const itemStyle = (role: Role): React.CSSProperties => {
     const base: React.CSSProperties = {
@@ -210,7 +244,7 @@ export default function ToonHub() {
         fontFamily: "'Cairo', sans-serif",
       }}
     >
-      <div className="relative w-full" style={{ height: '100vh', overflow: 'hidden' }}>
+      <div className="relative w-full" style={{ height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
         {/* حبيبات */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -239,14 +273,6 @@ export default function ToonHub() {
           }}
         >
           {active.ghost}
-        </div>
-
-        {/* الشعار */}
-        <div
-          className="absolute top-6 start-4 sm:start-8 text-white text-sm font-bold"
-          style={{ zIndex: 60, opacity: 0.9 }}
-        >
-          لجنة السنافر
         </div>
 
         {/* الكاروسيل */}
@@ -311,6 +337,7 @@ export default function ToonHub() {
         <div className="absolute bottom-6 end-4 sm:bottom-20 sm:end-10" style={{ zIndex: 60 }}>
           <a
             href={active.href}
+            {...linkProps(active.href)}
             className="flex items-center gap-2 text-white no-underline opacity-95 hover:opacity-100"
             style={{
               fontFamily: "'Lalezar', sans-serif",
