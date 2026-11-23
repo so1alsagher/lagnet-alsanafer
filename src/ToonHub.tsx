@@ -246,7 +246,7 @@ export default function ToonHub() {
           className="absolute top-6 start-4 sm:start-8 text-white text-sm font-bold"
           style={{ zIndex: 60, opacity: 0.9 }}
         >
-          بوابة الخدمات
+          لجنة السنافر
         </div>
 
         {/* الكاروسيل */}
