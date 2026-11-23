@@ -39,7 +39,7 @@ const ITEMS: Item[] = [
   {
     src: '/icons/books.png',
     ghost: 'المواد الدراسية',
-    ghostVw: 30,
+    ghostVw: 22,
     title: 'الكتب والمراجع',
     desc: 'كل ما تحتاجه من كتب ومراجع دراسية وأسئلة سنوات بين يديك.',
     href: '#',
