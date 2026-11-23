@@ -28,9 +28,9 @@ type Item = {
 const ITEMS: Item[] = [
   {
     src: '/icons/moodle.png',
-    ghost: 'مودل',
+    ghost: 'modle',
     ghostVw: 30,
-    title: 'منصة مودل',
+    title: 'منصة modle',
     desc: 'ادخل إلى موادك ومحاضراتك وواجباتك من مكان واحد.',
     href: '#',
     bg: '#3A8DEB',
@@ -39,7 +39,7 @@ const ITEMS: Item[] = [
   {
     src: '/icons/books.png',
     ghost: 'المواد الدراسية',
-    ghostVw: 22,
+    ghostVw: 12,
     title: 'الكتب والمراجع',
     desc: 'كل ما تحتاجه من كتب ومراجع دراسية وأسئلة سنوات بين يديك.',
     href: '#',
