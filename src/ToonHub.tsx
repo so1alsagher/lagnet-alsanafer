@@ -244,7 +244,7 @@ export default function ToonHub() {
         fontFamily: "'Cairo', sans-serif",
       }}
     >
-      <div className="relative w-full" style={{ height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+      <div className="relative w-full" style={{ height: 'calc(100vh - var(--header-h))', overflow: 'hidden' }}>
         {/* حبيبات */}
         <div
           className="absolute inset-0 pointer-events-none"

@@ -16,7 +16,7 @@ export default function PageShell({ title, subtitle, children }: Props) {
       style={{
         backgroundColor: '#2C7BD9',
         fontFamily: "'Cairo', sans-serif",
-        minHeight: 'calc(100vh - 64px)',
+        minHeight: 'calc(100vh - var(--header-h))',
       }}
     >
       <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">

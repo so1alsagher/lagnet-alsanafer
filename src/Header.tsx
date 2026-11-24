@@ -30,18 +30,19 @@ export default function Header({ route }: { route: string }) {
     <header
       dir="rtl"
       lang="ar"
-      className="sticky top-0 z-[100] h-16 w-full bg-white shadow-sm"
-      style={{ fontFamily: "'Cairo', sans-serif" }}
+      className="sticky top-0 z-[100] w-full bg-white shadow-sm"
+      style={{ fontFamily: "'Cairo', sans-serif", height: 'var(--header-h)' }}
     >
       <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-4 sm:px-8">
         {/* اليمين: اسم اللجنة (يرجّع للرئيسية) + الروابط */}
         <div className="flex items-center gap-8">
-          <a
-            href="#/"
-            className="no-underline"
-            style={{ fontFamily: "'Lalezar', sans-serif", fontSize: 28, lineHeight: 1, color: BLUE }}
-          >
-            لجنة السنافر
+          <a href="#/" aria-label="لجنة السنافر - الصفحة الرئيسية" className="flex items-center">
+            <img
+              src="/logo.png"
+              alt="لجنة السنافر"
+              draggable={false}
+              style={{ height: 'calc(var(--header-h) - 12px)', width: 'auto' }}
+            />
           </a>
           <nav className="hidden items-center gap-6 sm:flex">
             {NAV.map((n) => (
@@ -65,7 +66,9 @@ export default function Header({ route }: { route: string }) {
       </div>
 
       {open && (
-        <nav className="absolute inset-x-0 top-16 flex flex-col gap-1 bg-white px-4 pb-3 shadow-md sm:hidden">
+        <nav className="absolute inset-x-0 flex flex-col gap-1 bg-white px-4 pb-3 shadow-md sm:hidden"
+          style={{ top: 'var(--header-h)' }}
+        >
           {NAV.map((n) => (
             <a
               key={n.href}
