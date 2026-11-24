@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { assetPath } from './pages/utils';
 
 // روابط الهيدر: غيّر الاسم أو الرابط أو أضف سطر جديد
 const NAV = [
@@ -34,12 +33,12 @@ export default function Header({ route }: { route: string }) {
       className="sticky top-0 z-[100] w-full bg-white shadow-sm"
       style={{ fontFamily: "'Cairo', sans-serif", height: 'var(--header-h)' }}
     >
-     <div className="flex h-full w-full items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-4 sm:px-8">
         {/* اليمين: اسم اللجنة (يرجّع للرئيسية) + الروابط */}
         <div className="flex items-center gap-8">
           <a href="#/" aria-label="لجنة السنافر - الصفحة الرئيسية" className="flex items-center">
             <img
-              src={assetPath('/logo.png')}
+              src="/logo.png"
               alt="لجنة السنافر"
               draggable={false}
               style={{ height: 'calc(var(--header-h) - 12px)', width: 'auto' }}
