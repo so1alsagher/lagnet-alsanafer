@@ -12,8 +12,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { linkProps, asset } from './pages/utils';
 
-const EASE = 'cubic-bezier(0.4,0,0.2,1)';
-const DURATION = 650;
+const EASE = 'cubic-bezier(0.22,1,0.36,1)';
+const DURATION = 800;
 
 type Item = {
   src: string;
@@ -140,7 +140,7 @@ export default function ToonHub() {
   useEffect(() => {
     ITEMS.forEach((it) => {
       const img = new Image();
-      img.src = it.src;
+      img.src = asset(it.src);
     });
     const onResize = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener('resize', onResize);
@@ -153,7 +153,7 @@ export default function ToonHub() {
     setActiveIndex((i) => (dir === 'next' ? (i + 1) % N : (i + N - 1) % N));
     window.setTimeout(() => {
       lock.current = false;
-    }, DURATION);
+    }, 350); // الحركة بتكمل بنعومة حتى لو ضغطت بسرعة
   }, []);
 
   // الأسهم من لوحة المفاتيح (يسار = التالي في RTL)
@@ -166,21 +166,33 @@ export default function ToonHub() {
     return () => window.removeEventListener('keydown', onKey);
   }, [navigate]);
 
+  // سحب بالإصبع: يسار = التالي، يمين = السابق
+  const touchX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    touchX.current = null;
+    if (Math.abs(dx) > 40) navigate(dx < 0 ? 'next' : 'prev');
+  };
+
   const roleOf = (i: number): Role => roleForOffset((i - activeIndex + N) % N);
 
   const itemStyle = (role: Role): React.CSSProperties => {
     const base: React.CSSProperties = {
       position: 'absolute',
       aspectRatio: '1 / 1',
-      transition: `transform ${DURATION}ms ${EASE}, filter ${DURATION}ms ${EASE}, opacity ${DURATION}ms ${EASE}, left ${DURATION}ms ${EASE}`,
-      willChange: 'transform, filter, opacity',
+      transformOrigin: 'bottom center',
+      transition: ['transform', 'filter', 'opacity', 'left', 'height', 'bottom'].map((p) => `${p} ${DURATION}ms ${EASE}`).join(', '),
+      willChange: 'transform, filter, opacity, left, height, bottom',
     };
     switch (role) {
       case 'center':
         return {
           ...base,
           transform: `translateX(-50%) scale(${isMobile ? 1.15 : 1.3})`,
-          transformOrigin: 'bottom center',
           filter: 'blur(0px)',
           opacity: 1,
           zIndex: 20,
@@ -244,7 +256,12 @@ export default function ToonHub() {
         fontFamily: "'Cairo', sans-serif",
       }}
     >
-      <div className="relative w-full" style={{ height: 'calc(100vh - var(--header-h))', overflow: 'hidden' }}>
+      <div
+        className="relative w-full"
+        style={{ height: 'calc(100vh - var(--header-h))', overflow: 'hidden', touchAction: 'pan-y' }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         {/* حبيبات */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -257,23 +274,28 @@ export default function ToonHub() {
           }}
         />
 
-        {/* الكلمة الضخمة خلف الأيقونة */}
-        <div
-          className="absolute inset-x-0 flex items-center justify-center pointer-events-none select-none"
-          style={{
-            zIndex: 2,
-            top: '12%',
-            fontFamily: "'Lalezar', sans-serif",
-            fontSize: `clamp(70px, ${active.ghostVw}vw, 380px)`,
-            fontWeight: 400,
-            color: active.panel,
-            transition: `color ${DURATION}ms ${EASE}`,
-            lineHeight: 1.1,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {active.ghost}
-        </div>
+        {/* الكلمة الضخمة خلف الأيقونة (كل الكلمات موجودة والنشطة بس ظاهرة، فبتتبدل بتلاشي ناعم) */}
+        {ITEMS.map((it, i) => (
+          <div
+            key={it.ghost}
+            className="absolute inset-x-0 flex items-center justify-center pointer-events-none select-none"
+            style={{
+              zIndex: 2,
+              top: '12%',
+              fontFamily: "'Lalezar', sans-serif",
+              fontSize: `clamp(70px, ${it.ghostVw}vw, 380px)`,
+              fontWeight: 400,
+              color: it.panel,
+              opacity: i === activeIndex ? 1 : 0,
+              transform: i === activeIndex ? 'scale(1)' : 'scale(0.94)',
+              transition: `opacity ${DURATION}ms ${EASE}, transform ${DURATION}ms ${EASE}`,
+              lineHeight: 1.1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {it.ghost}
+          </div>
+        ))}
 
         {/* الكاروسيل */}
         <div className="absolute inset-0" style={{ zIndex: 3 }}>
@@ -299,6 +321,7 @@ export default function ToonHub() {
           className="absolute bottom-6 start-4 sm:bottom-20 sm:start-24"
           style={{ zIndex: 60, maxWidth: 320 }}
         >
+          <div key={activeIndex} className="toonhub-text">
           <p
             className="mb-2 sm:mb-3 text-lg sm:text-[26px] font-bold text-white"
             style={{ opacity: 0.95 }}
@@ -311,6 +334,7 @@ export default function ToonHub() {
           >
             {active.desc}
           </p>
+          </div>
           <div className="flex gap-3">
             <button
               type="button"
