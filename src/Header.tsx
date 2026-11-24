@@ -34,7 +34,7 @@ export default function Header({ route }: { route: string }) {
       className="sticky top-0 z-[100] w-full bg-white shadow-sm"
       style={{ fontFamily: "'Cairo', sans-serif", height: 'var(--header-h)' }}
     >
-      <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-4 sm:px-8">
+      <div className="flex h-full w-full items-center justify-between px-4 sm:px-6">
         {/* اليمين: اسم اللجنة (يرجّع للرئيسية) + الروابط */}
         <div className="flex items-center gap-8">
           <a href="#/" aria-label="لجنة السنافر - الصفحة الرئيسية" className="flex items-center">
