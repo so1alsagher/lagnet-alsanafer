@@ -10,7 +10,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { linkProps } from './pages/utils';
+import { linkProps, asset } from './pages/utils';
 
 const EASE = 'cubic-bezier(0.4,0,0.2,1)';
 const DURATION = 650;
@@ -280,7 +280,7 @@ export default function ToonHub() {
           {ITEMS.map((it, i) => (
             <div key={it.src} style={itemStyle(roleOf(i))}>
               <img
-                src={it.src}
+                src={asset(it.src)}
                 alt={it.title}
                 draggable={false}
                 style={{

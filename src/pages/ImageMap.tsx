@@ -1,4 +1,4 @@
-import { linkProps } from './utils';
+import { linkProps, asset } from './utils';
 
 // منطقة قابلة للضغط فوق الصورة. القيم كلها نسب مئوية من حجم الصورة:
 // x = البعد عن الحافة اليسرى، y = البعد عن الأعلى، w = العرض، h = الارتفاع
@@ -21,7 +21,7 @@ type Props = {
 export default function ImageMap({ src, alt, spots, maxWidth = 560 }: Props) {
   return (
     <div className="relative mx-auto" style={{ maxWidth }}>
-      <img src={src} alt={alt} draggable={false} className="block h-auto w-full select-none" />
+      <img src={asset(src)} alt={alt} draggable={false} className="block h-auto w-full select-none" />
       {spots.map((s) => (
         <a
           key={s.label}
