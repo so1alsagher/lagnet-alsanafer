@@ -10,7 +10,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { linkProps } from './pages/utils';
+import { assetPath, linkProps } from './pages/utils';
 
 const EASE = 'cubic-bezier(0.4,0,0.2,1)';
 const DURATION = 650;
@@ -140,7 +140,7 @@ export default function ToonHub() {
   useEffect(() => {
     ITEMS.forEach((it) => {
       const img = new Image();
-      img.src = it.src;
+      img.src = assetPath(it.src);
     });
     const onResize = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener('resize', onResize);
@@ -280,7 +280,7 @@ export default function ToonHub() {
           {ITEMS.map((it, i) => (
             <div key={it.src} style={itemStyle(roleOf(i))}>
               <img
-                src={it.src}
+                src={assetPath(it.src)}
                 alt={it.title}
                 draggable={false}
                 style={{

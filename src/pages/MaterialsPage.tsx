@@ -1,6 +1,7 @@
 import PageShell from './PageShell';
 import ImageMap, { type Spot } from './ImageMap';
 import LinkList from './LinkList';
+import { assetPath } from './utils';
 
 /**
  * ====== هون بتعدّل ======
@@ -20,7 +21,7 @@ const SPOTS: Spot[] = [
 export default function MaterialsPage() {
   return (
     <PageShell title="المواد الدراسية" subtitle="اضغط على الصورة لتفتح الرابط المطلوب.">
-      <ImageMap src={IMAGE} alt="المواد الدراسية" spots={SPOTS} />
+      <ImageMap src={assetPath(IMAGE)} alt="المواد الدراسية" spots={SPOTS} />
 
       {/* نفس الروابط كقائمة تحت الصورة (أسهل على الموبايل) */}
       <h2 className="mb-3 mt-10 text-xl font-bold">الروابط</h2>
