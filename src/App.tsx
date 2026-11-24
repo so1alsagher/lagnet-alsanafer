@@ -6,7 +6,6 @@ import MajorsPage from './pages/MajorsPage';
 import MapPage from './pages/MapPage';
 import TeachersPage from './pages/TeachersPage';
 import AboutPage from './pages/AboutPage';
-import CoursePage from './pages/CoursePage';
 
 // تنقل بسيط بين الصفحات عن طريق الجزء الأخير من الرابط (#/...)
 // لإضافة صفحة جديدة: أنشئ ملفها بمجلد pages وأضف سطر هون.
@@ -31,11 +30,10 @@ export default function App() {
   }, []);
 
   const Page = ROUTES[route];
-  const courseId = route.startsWith('#/course/') ? decodeURIComponent(route.slice(9)) : null;
   return (
     <>
       <Header route={route} />
-      {courseId ? <CoursePage id={courseId} /> : Page ? <Page /> : <ToonHub />}
+      {Page ? <Page /> : <ToonHub />}
     </>
   );
 }

@@ -4,11 +4,10 @@ type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
-  wide?: boolean;
 };
 
 // الإطار المشترك لكل الصفحات الداخلية: خلفية زرقاء + عنوان
-export default function PageShell({ title, subtitle, children, wide }: Props) {
+export default function PageShell({ title, subtitle, children }: Props) {
   return (
     <div
       dir="rtl"
@@ -20,7 +19,7 @@ export default function PageShell({ title, subtitle, children, wide }: Props) {
         minHeight: 'calc(100vh - var(--header-h))',
       }}
     >
-      <div className={`mx-auto ${wide ? 'max-w-5xl' : 'max-w-3xl'} px-4 py-8 sm:py-12`}>
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
         <h1
           className="text-4xl sm:text-6xl"
           style={{ fontFamily: "'Lalezar', sans-serif", fontWeight: 400, lineHeight: 1.2 }}
