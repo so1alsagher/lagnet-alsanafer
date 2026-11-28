@@ -28,22 +28,23 @@ export default function MaterialsPage() {
     >
       <ImageMap src={PLAN_IMAGE} alt="الخطة الشجرية للمواد الهندسية المشتركة" spots={SPOTS} maxWidth={1100} />
 
-      <h2 className="mb-3 mt-10 text-xl font-bold">كل المواد</h2>
-      <div className="mb-4 flex items-center gap-3 rounded-full border border-white/40 bg-white/15 px-5 py-3">
-        <Search size={20} strokeWidth={2.25} className="shrink-0" />
+      <h2 className="sm-title mb-3 mt-10 text-3xl">كل المواد</h2>
+      <div className="mb-4 flex items-center gap-3 sm-input" style={{ borderRadius: 999 }}>
+        <Search size={20} strokeWidth={2.5} className="shrink-0" style={{ color: 'var(--sm-blue)' }} />
         <input
           type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="ابحث عن مادة..."
           aria-label="بحث عن مادة"
-          className="w-full bg-transparent text-white outline-none placeholder:text-white/70"
+          className="w-full bg-transparent outline-none"
+          style={{ color: 'var(--sm-navy)' }}
         />
       </div>
       {shown.length ? (
         <LinkList items={shown.map((c) => ({ label: c.name, href: courseHref(c.id) }))} />
       ) : (
-        <p className="py-8 text-center opacity-90">ما في نتائج مطابقة.</p>
+        <p className="py-8 text-center font-bold">ما في نتائج مطابقة.</p>
       )}
     </PageShell>
   );

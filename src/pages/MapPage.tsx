@@ -14,9 +14,7 @@ export default function MapPage() {
       {MAP_IMAGE ? (
         <img src={asset(MAP_IMAGE)} alt="الخريطة الجامعية" className="mx-auto block h-auto w-full rounded-2xl" />
       ) : (
-        <div className="flex h-64 items-center justify-center rounded-2xl border-2 border-dashed border-white/60 text-lg font-bold">
-          سيتم إضافة الخريطة قريباً
-        </div>
+        <div className="sm-card sm-card-off h-64 justify-center text-lg font-bold">سيتم إضافة الخريطة قريباً</div>
       )}
     </PageShell>
   );

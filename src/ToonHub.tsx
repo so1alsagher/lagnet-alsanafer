@@ -6,97 +6,71 @@
  * <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
  *
  * الصور: انسخ مجلد public/icons كامل إلى مجلد public في مشروع Vite.
- * عدّل href لكل عنصر في ITEMS ليشير لرابط الخدمة الحقيقي.
+ * روابط مودل وبوابة الطالب بتتعدّل من لوحة الأدمن (#/admin).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { linkProps, asset } from './pages/utils';
+import { useContent } from './data/content';
 
 const EASE = 'cubic-bezier(0.22,1,0.36,1)';
 const DURATION = 800;
 
 type Item = {
+  id: 'moodle' | 'materials' | 'portal' | 'other';
   src: string;
   ghost: string; // الكلمة الضخمة خلف الأيقونة
   ghostVw: number; // حجم الكلمة بوحدة vw (الكلمات الطويلة أصغر)
   title: string;
   desc: string;
-  href: string;
-  bg: string; // لون الخلفية (درجة أزرق)
-  panel: string; // لون الكلمة الضخمة (أغمق من الخلفية)
+  href?: string; // رابط ثابت (إذا ما انحط بيجي من لوحة الأدمن)
+  bg: string; // لون الخلفية (أزرق فاتح)
+  panel: string; // لون الكلمة الضخمة (أغمق شوي من الخلفية)
 };
 
+// 4 أيقونات: المواد الدراسية، مودل، بوابة الطالب، مواقع أخرى
 const ITEMS: Item[] = [
   {
+    id: 'moodle',
     src: '/icons/moodle.png',
     ghost: 'مودل',
     ghostVw: 30,
     title: 'منصة مودل',
     desc: 'ادخل إلى موادك ومحاضراتك وواجباتك من مكان واحد.',
-    href: '#',
-    bg: '#3A8DEB',
-    panel: '#1D5FB5',
+    bg: '#E3F2FE',
+    panel: '#B7DAF8',
   },
   {
+    id: 'materials',
     src: '/icons/books.png',
     ghost: 'المواد',
     ghostVw: 24,
     title: 'المواد الدراسية',
     desc: 'كل ما تحتاجه من مواد ومراجع دراسية بين يديك.',
     href: '#/materials',
-    bg: '#2C7BD9',
-    panel: '#14509E',
+    bg: '#D6EBFC',
+    panel: '#A8D2F6',
   },
   {
-    src: '/icons/exams.png',
-    ghost: 'الامتحانات',
-    ghostVw: 17,
-    title: 'امتحانات المستوى',
-    desc: 'تعرّف على مواعيد امتحانات المستوى ونماذج منها للتدرّب.',
-    href: '#',
-    bg: '#4A9BF0',
-    panel: '#2467BD',
-  },
-  {
+    id: 'portal',
     src: '/icons/portal.png',
     ghost: 'البوابة',
     ghostVw: 24,
     title: 'بوابة الطالب',
     desc: 'سجّل دخولك لإدارة بياناتك وخدماتك الجامعية.',
-    href: '#',
-    bg: '#1E6AC8',
-    panel: '#0F4690',
+    bg: '#DDEFFD',
+    panel: '#B0D6F7',
   },
   {
-    src: '/icons/majors.png',
-    ghost: 'التخصصات',
-    ghostVw: 19,
-    title: 'التخصصات الجامعية',
-    desc: 'استعرض التخصصات المتاحة وتفاصيل كل برنامج.',
-    href: '#/majors',
-    bg: '#3278D6',
-    panel: '#1A58A8',
-  },
-  {
+    id: 'other',
     src: '/icons/links.png',
     ghost: 'روابط',
     ghostVw: 28,
     title: 'مواقع أخرى',
     desc: 'روابط مفيدة لمواقع وخدمات إضافية.',
-    href: '#',
-    bg: '#5AA6F2',
-    panel: '#2D74C4',
-  },
-  // الأيقونة السابعة: مؤقتة. بدّل الصورة والاسم والرابط لما تجهز.
-  {
-    src: '/icons/new.svg',
-    ghost: 'جديد',
-    ghostVw: 28,
-    title: 'أيقونة جديدة',
-    desc: 'سيتم إضافة المحتوى قريباً.',
-    href: '#',
-    bg: '#2A72CC',
-    panel: '#154C94',
+    href: '#/other-sites',
+    bg: '#CDE6FB',
+    panel: '#A0CDF4',
   },
 ];
 
@@ -110,12 +84,17 @@ function roleForOffset(d: number): Role {
   if (d === 0) return 'center';
   if (d === 1) return 'left';
   if (d === N - 1) return 'right';
-  if (d === 2) return 'farLeft';
-  if (d === N - 2) return 'farRight';
+  if (N > 4) {
+    if (d === 2) return 'farLeft';
+    if (d === N - 2) return 'farRight';
+  }
   return 'back';
 }
 
 export default function ToonHub() {
+  const { hub } = useContent();
+  const hrefOf = (it: Item) => (it.id === 'moodle' ? hub.moodle : it.id === 'portal' ? hub.portal : it.href) || '#';
+
   // نتذكر الأيقونة الحالية عشان لما ترجع من صفحة داخلية تلاقي نفس المكان
   const [activeIndex, setActiveIndex] = useState(() => {
     try {
@@ -147,13 +126,23 @@ export default function ToonHub() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const navigate = useCallback((dir: 'next' | 'prev') => {
-    if (lock.current) return;
+  const unlockSoon = () => {
     lock.current = true;
-    setActiveIndex((i) => (dir === 'next' ? (i + 1) % N : (i + N - 1) % N));
     window.setTimeout(() => {
       lock.current = false;
     }, 350); // الحركة بتكمل بنعومة حتى لو ضغطت بسرعة
+  };
+
+  const navigate = useCallback((dir: 'next' | 'prev') => {
+    if (lock.current) return;
+    unlockSoon();
+    setActiveIndex((i) => (dir === 'next' ? (i + 1) % N : (i + N - 1) % N));
+  }, []);
+
+  const goTo = useCallback((i: number) => {
+    if (lock.current) return;
+    unlockSoon();
+    setActiveIndex(i);
   }, []);
 
   // الأسهم من لوحة المفاتيح (يسار = التالي في RTL)
@@ -185,7 +174,9 @@ export default function ToonHub() {
       position: 'absolute',
       aspectRatio: '1 / 1',
       transformOrigin: 'bottom center',
-      transition: ['transform', 'filter', 'opacity', 'left', 'height', 'bottom'].map((p) => `${p} ${DURATION}ms ${EASE}`).join(', '),
+      transition: ['transform', 'filter', 'opacity', 'left', 'height', 'bottom']
+        .map((p) => `${p} ${DURATION}ms ${EASE}`)
+        .join(', '),
       willChange: 'transform, filter, opacity, left, height, bottom',
     };
     switch (role) {
@@ -229,7 +220,7 @@ export default function ToonHub() {
           ...base,
           transform: 'translateX(-50%) scale(1)',
           filter: 'blur(4px)',
-          opacity: isMobile ? 0 : 0.5,
+          opacity: 0,
           zIndex: 5,
           left: '50%',
           height: isMobile ? '10%' : '18%',
@@ -238,42 +229,25 @@ export default function ToonHub() {
     }
   };
 
-  const grain = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.08'/></svg>")`;
-
-  const circleBtn =
-    'w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-transparent text-white flex items-center justify-center cursor-pointer hover:scale-[1.08] hover:bg-white/[0.12] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
-
   const active = ITEMS[activeIndex];
 
   return (
     <div
       dir="rtl"
       lang="ar"
-      className="relative w-full overflow-hidden"
+      className="sm-page sm-dots w-full"
       style={{
         backgroundColor: active.bg,
+        backgroundImage: 'none',
         transition: `background-color ${DURATION}ms ${EASE}`,
-        fontFamily: "'Cairo', sans-serif",
       }}
     >
       <div
         className="relative w-full"
-        style={{ height: 'calc(100vh - var(--header-h))', overflow: 'hidden', touchAction: 'pan-y' }}
+        style={{ height: 'var(--page-h)', minHeight: 420, overflow: 'hidden', touchAction: 'pan-y' }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        {/* حبيبات */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            zIndex: 50,
-            opacity: 0.4,
-            backgroundImage: grain,
-            backgroundSize: '200px 200px',
-            backgroundRepeat: 'repeat',
-          }}
-        />
-
         {/* الكلمة الضخمة خلف الأيقونة (كل الكلمات موجودة والنشطة بس ظاهرة، فبتتبدل بتلاشي ناعم) */}
         {ITEMS.map((it, i) => (
           <div
@@ -297,83 +271,69 @@ export default function ToonHub() {
           </div>
         ))}
 
-        {/* الكاروسيل */}
+        {/* الكاروسيل: كل أيقونة مربع كامل قابل للضغط (hitbox) */}
         <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          {ITEMS.map((it, i) => (
-            <div key={it.src} style={itemStyle(roleOf(i))}>
-              <img
-                src={asset(it.src)}
-                alt={it.title}
+          {ITEMS.map((it, i) => {
+            const role = roleOf(i);
+            const isCenter = role === 'center';
+            const clickable = isCenter || role === 'left' || role === 'right' || role === 'farLeft' || role === 'farRight';
+            const href = hrefOf(it);
+            return (
+              <a
+                key={it.id}
+                href={isCenter ? href : '#/'}
+                {...(isCenter ? linkProps(href) : {})}
+                aria-label={isCenter ? `افتح ${it.title}` : `اعرض ${it.title}`}
+                aria-hidden={!clickable}
+                tabIndex={clickable ? 0 : -1}
                 draggable={false}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'bottom center',
+                className="sm-icon"
+                onClick={(e) => {
+                  if (!isCenter) {
+                    e.preventDefault();
+                    if (clickable) goTo(i);
+                  }
                 }}
-              />
-            </div>
-          ))}
+                style={{ ...itemStyle(role), pointerEvents: clickable ? 'auto' : 'none' }}
+              >
+                <img
+                  src={asset(it.src)}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    objectPosition: 'bottom center',
+                  }}
+                />
+              </a>
+            );
+          })}
         </div>
 
         {/* النص والأزرار */}
         <div
-          className="absolute bottom-6 start-4 sm:bottom-20 sm:start-24"
-          style={{ zIndex: 60, maxWidth: 320 }}
+          className="absolute bottom-6 start-4 sm:bottom-14 sm:start-24"
+          style={{ zIndex: 60, maxWidth: 340 }}
         >
           <div key={activeIndex} className="toonhub-text">
-          <p
-            className="mb-2 sm:mb-3 text-lg sm:text-[26px] font-bold text-white"
-            style={{ opacity: 0.95 }}
-          >
-            {active.title}
-          </p>
-          <p
-            className="hidden sm:block text-sm text-white mb-4 sm:mb-5"
-            style={{ opacity: 0.9, lineHeight: 1.8 }}
-          >
-            {active.desc}
-          </p>
+            <p className="sm-bubble">{active.title}</p>
+            <p
+              className="hidden sm:block text-sm mb-5 font-semibold"
+              style={{ color: 'var(--sm-navy)', lineHeight: 1.8 }}
+            >
+              {active.desc}
+            </p>
           </div>
           <div className="flex gap-3">
-            <button
-              type="button"
-              aria-label="السابق"
-              className={circleBtn}
-              style={{ transition: 'transform 150ms, background-color 150ms' }}
-              onClick={() => navigate('prev')}
-            >
-              <ArrowRight size={26} strokeWidth={2.25} />
+            <button type="button" aria-label="السابق" className="sm-arrow" onClick={() => navigate('prev')}>
+              <ArrowRight size={26} strokeWidth={2.75} />
             </button>
-            <button
-              type="button"
-              aria-label="التالي"
-              className={circleBtn}
-              style={{ transition: 'transform 150ms, background-color 150ms' }}
-              onClick={() => navigate('next')}
-            >
-              <ArrowLeft size={26} strokeWidth={2.25} />
+            <button type="button" aria-label="التالي" className="sm-arrow" onClick={() => navigate('next')}>
+              <ArrowLeft size={26} strokeWidth={2.75} />
             </button>
           </div>
-        </div>
-
-        {/* رابط افتح */}
-        <div className="absolute bottom-6 end-4 sm:bottom-20 sm:end-10" style={{ zIndex: 60 }}>
-          <a
-            href={active.href}
-            {...linkProps(active.href)}
-            className="flex items-center gap-2 text-white no-underline opacity-95 hover:opacity-100"
-            style={{
-              fontFamily: "'Lalezar', sans-serif",
-              fontSize: 'clamp(22px, 4vw, 56px)',
-              fontWeight: 400,
-              lineHeight: 1,
-              transition: 'opacity 200ms',
-            }}
-          >
-            افتح
-            <ArrowLeft className="w-5 h-5 sm:w-8 sm:h-8" strokeWidth={2.25} />
-          </a>
         </div>
       </div>
     </div>

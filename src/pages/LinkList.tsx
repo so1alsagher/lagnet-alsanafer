@@ -1,26 +1,33 @@
 import { ArrowLeft } from 'lucide-react';
 import { linkProps } from './utils';
 
-export type LinkItem = { label: string; href: string; desc?: string };
+export type { LinkItem } from '../data/content';
+import type { LinkItem } from '../data/content';
 
-// قائمة بطاقات، كل بطاقة رابط
+// قائمة بطاقات، كل بطاقة رابط (إذا الرابط فاضي بتظهر "قريباً" وما بتنضغط)
 export default function LinkList({ items }: { items: LinkItem[] }) {
   return (
-    <div className="grid gap-3">
-      {items.map((it) => (
-        <a
-          key={it.label}
-          href={it.href}
-          {...linkProps(it.href)}
-          className="flex items-center justify-between gap-4 rounded-2xl border border-white/40 bg-white/15 px-5 py-4 text-white no-underline transition hover:bg-white/25"
-        >
-          <span>
-            <span className="block text-lg font-bold">{it.label}</span>
-            {it.desc && <span className="mt-1 block text-sm opacity-85">{it.desc}</span>}
-          </span>
-          <ArrowLeft size={22} strokeWidth={2.25} className="shrink-0" />
-        </a>
-      ))}
+    <div className="grid gap-4">
+      {items.map((it, i) => {
+        const body = (
+          <>
+            <span>
+              <span className="sm-card-title">{it.label}</span>
+              {(it.desc || !it.href) && <span className="sm-card-desc">{it.desc || 'قريباً'}</span>}
+            </span>
+            {it.href && <ArrowLeft size={22} strokeWidth={2.5} className="shrink-0" />}
+          </>
+        );
+        return it.href ? (
+          <a key={`${it.label}-${i}`} href={it.href} {...linkProps(it.href)} className="sm-card">
+            {body}
+          </a>
+        ) : (
+          <div key={`${it.label}-${i}`} className="sm-card sm-card-off">
+            {body}
+          </div>
+        );
+      })}
     </div>
   );
 }

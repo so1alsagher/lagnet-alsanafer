@@ -1,24 +1,25 @@
+import type { SectionKey } from './content';
+
 /**
  * ====== بيانات المواد (هون بتعدّل) ======
  * كل مادة = سطر واحد: [الرمز, الاسم, x, y, w, h]
  * x,y,w,h = مكان المربع على صورة الخطة بالبكسل (الصورة 1215×864) — الموقع بيحوّلها لنسب تلقائياً.
  *
- * الروابط: بملف `links` تحت. لكل مادة بتحط رابط لكل قسم (مجلد درايف، يوتيوب، ...).
+ * الروابط (كتاب، فيديوهات، ...) مش هون: بتتعدّل من لوحة الأدمن (#/admin) وبتنحفظ بملف content.json.
  * أي قسم بدون رابط بيظهر "قريباً".
  */
 export const IMG_W = 1215;
 export const IMG_H = 864;
 export const PLAN_IMAGE = '/materials.jpg';
 
-export const SECTIONS = [
+export const SECTIONS: { key: SectionKey; title: string; desc: string }[] = [
   { key: 'book', title: 'كتاب المادة وحلولها', desc: 'الكتاب المقرر مع حلول التمارين.' },
   { key: 'notes', title: 'ملخصات وشروحات', desc: 'ملخصات مختصرة وشروحات للمادة.' },
   { key: 'videos', title: 'فيديوهات', desc: 'شروحات فيديو للمادة.' },
   { key: 'midterm', title: 'أسئلة ميد', desc: 'نماذج وأسئلة سنوات سابقة للامتحان النصفي.' },
   { key: 'final', title: 'أسئلة فاينال', desc: 'نماذج وأسئلة سنوات سابقة للامتحان النهائي.' },
-] as const;
+];
 
-export type SectionKey = (typeof SECTIONS)[number]['key'];
 export type Course = {
   id: string;
   name: string;
@@ -26,7 +27,6 @@ export type Course = {
   y: number;
   w: number;
   h: number;
-  links: Partial<Record<SectionKey, string>>;
 };
 
 type Row = [string, string, number, number, number, number];
@@ -71,26 +71,7 @@ const ROWS: Row[] = [
   ['sports-health', 'رياضة وصحة', 33, 565, 135, 80],
 ];
 
-/**
- * روابط المواد. مثال:
- * 'calc1': {
- *   book: 'https://drive.google.com/...',
- *   videos: 'https://youtube.com/playlist?list=...',
- * },
- */
-const LINKS: Record<string, Partial<Record<SectionKey, string>>> = {
-  // 'calc1': { book: '', notes: '', videos: '', midterm: '', final: '' },
-};
-
-export const COURSES: Course[] = ROWS.map(([id, name, x, y, w, h]) => ({
-  id,
-  name,
-  x,
-  y,
-  w,
-  h,
-  links: LINKS[id] ?? {},
-}));
+export const COURSES: Course[] = ROWS.map(([id, name, x, y, w, h]) => ({ id, name, x, y, w, h }));
 
 export const courseHref = (id: string) => `#/course/${id}`;
 export const findCourse = (id: string) => COURSES.find((c) => c.id === id);
